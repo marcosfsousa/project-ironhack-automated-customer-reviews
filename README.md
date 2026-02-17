@@ -14,18 +14,6 @@ With thousands of reviews available across multiple platforms, manually analyzin
    - **Objective**: Classify customer reviews into **positive**, **negative**, or **neutral** categories to help the company improve its products and services.
    - **Task**: Create a model for classifying the **textual content** of reviews into these three categories.
 
-####  Mapping Star Ratings to Sentiment Classes  
-Since the dataset contains **star ratings (1 to 5)**, you should map them to three sentiment classes as follows:  
-
-| **Star Rating** | **Sentiment Class** |
-|---------------|------------------|
-|  1 - 2     | **Negative**  |
-|  3         | **Neutral**  |
-|  4 - 5     | **Positive**  |
-
- This is a simple approach, but you are encouraged to experiment with different mappings! 
-
-
 **Model Building**
 
 For classifying customer reviews into **positive, negative, or neutral**, use **pretrained transformer-based models** to leverage powerful language representations without training from scratch.  
@@ -79,11 +67,25 @@ Explore models on [Hugging Face](https://huggingface.co/models) and experiment w
      Consider using **Pretrained Generative Models** like **T5**, **GPT-3**, or **BART** for generating coherent and well-structured summaries. These models excel at tasks like summarization and text generation, and can be fine-tuned to produce high-quality outputs based on the extracted insights from reviews. 
      You are encouraged to explore other **Transformer-based models** available on platforms like **Hugging Face**. Fine-tuning any of these pre-trained models on your specific dataset could further improve the relevance and quality of the generated summaries.
 
-## Datasets
+## Data
 
-- **Primary Dataset**: [Amazon Product Reviews](https://www.kaggle.com/datasets/datafiniti/consumer-reviews-of-amazon-products/data)
-- **Larger Dataset**: [Amazon Reviews Dataset](https://cseweb.ucsd.edu/~jmcauley/datasets.html#amazon_reviews)
-- **Additional Datasets**: You are free to use other datasets from sources like HuggingFace, Kaggle, or any other platform.
+### Raw Datasets
+Download the following datasets and place them in `/data/`:
+
+| File | Source |
+|------|--------|
+| 1429_1.csv | [Kaggle — Consumer Reviews of Amazon Products](https://www.kaggle.com/datasets/datafiniti/consumer-reviews-of-amazon-products?resource=download&select=1429_1.csv) |
+| amazon_customer_reviews_2017_2018.csv | [Kaggle — Datafiniti_Amazon_Consumer_Reviews_of_Amazon_Products.csv , v2](https://www.kaggle.com/datasets/datafiniti/consumer-reviews-of-amazon-products?resource=download&select=Datafiniti_Amazon_Consumer_Reviews_of_Amazon_Products.csv) |
+| amazon_customer_reviews_Feb_April_2019.csv | [Kaggle — Datafiniti_Amazon_Consumer_Reviews_of_Amazon_Products_May19, v3](https://www.kaggle.com/datasets/datafiniti/consumer-reviews-of-amazon-products?resource=download&select=Datafiniti_Amazon_Consumer_Reviews_of_Amazon_Products_May19.csv) |
+
+### Processed Files
+Pre-processed files are included in `/data/processed/` and can be used
+directly to run Notebooks 02–04 without downloading the raw datasets.
+
+| File | Description |
+|------|-------------|
+| sentiment_ready.csv | 39,794 reviews with sentiment labels |
+| electronics_ready.csv | 30,487 electronics reviews with meta-categories |
 
 <!-- ## Deployment -->
 
