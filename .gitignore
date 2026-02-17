@@ -1,0 +1,9 @@
+# Environments
+.env
+.envrc
+.venv
+env/
+venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints
