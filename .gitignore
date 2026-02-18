@@ -13,3 +13,6 @@ data/*.csv
 
 # Keep processed files tracked
 !data/processed/
+
+# README.md
+README.md
