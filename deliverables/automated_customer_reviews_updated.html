@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Review Aggregator - AI Product Recommendations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .project-info {
+            font-size: 0.95em;
+            color: #888;
+            font-style: italic;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .product-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        .product-icon {
+            font-size: 4em;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .product-category {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .product-tagline {
+            font-size: 1em;
+            color: #667eea;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .product-rating {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #f59e0b;
+        }
+
+        .product-blurb {
+            font-size: 0.95em;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .read-more-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .read-more-btn:hover {
+            background: #5568d3;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            color: #999;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .modal-header {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-right: 50px;
+        }
+
+        .version-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .version-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .version-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .version-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .modal-body {
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: #444;
+        }
+
+        .modal-body p {
+            margin-bottom: 15px;
+        }
+
+        .modal-body strong {
+            color: #667eea;
+        }
+
+        .modal-body ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+            color: #888;
+            font-size: 0.95em;
+        }
+
+        .footer-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .subtitle {
+                font-size: 1.1em;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+
+            .modal-header {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Automated Customer Reviews</h1>
+            <div class="subtitle">AI-Powered Product Recommendations</div>
+            <div class="project-info">
+                Using LLaMA 3.2-3B to generate blog-style recommendations from Amazon customer reviews
+            </div>
+        </header>
+
+        <div class="products-grid">
+            <!-- Fire Tablets Card -->
+            <div class="product-card" onclick="openModal('fire-tablets')">
+                <div class="product-icon">📱</div>
+                <div class="product-category">Fire Tablets</div>
+                <div class="product-tagline">Best budget tablet</div>
+                <div class="product-rating">⭐⭐⭐⭐ 4.0</div>
+                <div class="product-blurb">
+                    Customers rave about their affordability, ease of use, and entertainment value. Many reviewers praise the tablets' ability to provide hours of fun for kids, making them an excellent choice for families.
+                </div>
+                <button class="read-more-btn">Read Full Review</button>
+            </div>
+
+            <!-- Kindle E-Readers Card -->
+            <div class="product-card" onclick="openModal('kindle')">
+                <div class="product-icon">📚</div>
+                <div class="product-category">Kindle E-Readers</div>
+                <div class="product-tagline">Perfect for bookworms</div>
+                <div class="product-rating">⭐⭐⭐⭐⯪ 4.5</div>
+                <div class="product-blurb">
+                    These devices excel in providing a seamless reading experience, especially for bookworms who devour multiple titles at once. Their compact design makes them perfect for commuting and travel.
+                </div>
+                <button class="read-more-btn">Read Full Review</button>
+            </div>
+
+            <!-- Fire Kids Edition Card -->
+            <div class="product-card" onclick="openModal('fire-kids')">
+                <div class="product-icon">👶</div>
+                <div class="product-category">Fire Kids Edition</div>
+                <div class="product-tagline">Kid-safe with warranty</div>
+                <div class="product-rating">⭐⭐⭐⭐ 4.3</div>
+                <div class="product-blurb">
+                    One of the primary advantages is its ability to provide a safe and controlled environment for young learners, with robust parental controls and included Kindle Unlimited subscription.
+                </div>
+                <button class="read-more-btn">Read Full Review</button>
+            </div>
+
+            <!-- Echo & Smart Speakers Card -->
+            <div class="product-card" onclick="openModal('echo')">
+                <div class="product-icon">🔊</div>
+                <div class="product-category">Echo & Smart Speakers</div>
+                <div class="product-tagline">Smart home essential</div>
+                <div class="product-rating">⭐⭐⭐⭐⭐ 5.0</div>
+                <div class="product-blurb">
+                    The primary strength lies in their ease of setup and user-friendly interface. Many customers rave about how seamlessly these devices integrate into their daily lives.
+                </div>
+                <button class="read-more-btn">Read Full Review</button>
+            </div>
+
+            <!-- Fire TV & Streaming Card -->
+            <div class="product-card" onclick="openModal('fire-tv')">
+                <div class="product-icon">📺</div>
+                <div class="product-category">Fire TV & Streaming</div>
+                <div class="product-tagline">Cord-cutting solution</div>
+                <div class="product-rating">⭐⭐⭐⭐ 4.1</div>
+                <div class="product-blurb">
+                    One of the main strengths is its ease of setup, with many praising the relatively quick process. Users appreciate the wide range of apps available and the ability to cut the cord.
+                </div>
+                <button class="read-more-btn">Read Full Review</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>All recommendations generated using LLaMA 3.2-3B-Instruct</p>
+            <p>Based on analysis of 30,000+ Amazon customer reviews</p>
+            <div class="footer-badge">Ironhack AI Bootcamp 2025 | Marcos</div>
+        </footer>
+    </div>
+
+    <!-- Modals for Full Articles -->
+    <div id="modal-fire-tablets" class="modal" onclick="closeModal(event, 'fire-tablets')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event, 'fire-tablets')">×</button>
+            <div class="modal-header">Fire Tablets</div>
+            
+            <div class="version-toggle">
+                <button class="version-btn active" onclick="switchVersion('fire-tablets', 'controlled')">Controlled Version</button>
+                <button class="version-btn" onclick="switchVersion('fire-tablets', 'creative')">Creative Version</button>
+            </div>
+            
+            <div class="modal-body" id="content-fire-tablets-controlled">
+                <p>When it comes to Fire Tablets, customers rave about their affordability, ease of use, and entertainment value. Many reviewers praise the tablets' ability to provide hours of fun for kids, making them an excellent choice for families and parents seeking a budget-friendly option for kids' entertainment. The inclusion of Alexa, a virtual assistant, is also a major draw, allowing users to access various skills and features seamlessly. Additionally, the tablets' compact design makes them perfect for travel or everyday carry.</p>
+
+                <p>However, some reviewers note that the display size may be too small for certain tasks, such as watching videos or browsing the web, and that the operating system can be slower compared to other devices. A few customers have also reported issues with durability, citing instances where the back of the tablet cracked despite minimal handling. Despite these limitations, the majority of customers agree that Fire Tablets offer exceptional value for their price, making them an attractive option for those seeking a basic tablet experience without breaking the bank.</p>
+
+                <p>Fire Tablets are particularly well-suited for casual users who prioritize entertainment and reading over demanding tasks like video editing or gaming. Parents and educators may find them suitable for young children, as long as they're aware of the potential limitations. However, for those requiring a device for more complex tasks, alternative options might be more suitable.</p>
+
+                <p>In conclusion, while Fire Tablets have their drawbacks, their unique blend of affordability, ease of use, and entertainment value make them a compelling choice for specific use cases. If you're looking for a budget-friendly tablet for kids' entertainment, educational purposes, or casual browsing, Fire Tablets are worth considering. On the other hand, if you require a device for more demanding tasks or prefer a larger display, you may want to explore alternative options.</p>
+
+                <p><strong>Choose Fire Tablets if you need a simple, affordable tablet for kids' entertainment, educational activities, or casual browsing. Look elsewhere if you require a device for more complex tasks, such as gaming, video editing, or heavy-duty productivity.</strong></p>
+            </div>
+
+            <div class="modal-body" id="content-fire-tablets-creative" style="display: none;">
+                <p>When it comes to Fire Tablets, customers rave about their affordability, ease of use, and entertainment value. Many reviewers praise the tablets' ability to provide endless hours of fun for kids, making them an excellent choice for parents seeking a budget-friendly alternative to more expensive options. The inclusion of Alexa, a virtual assistant, is also widely appreciated, allowing users to access various skills and make hands-free calls.</p>
+
+                <p>However, some customers express frustration with the display size, citing it as a limitation. A few reviewers also mention that the operating system can be slow, particularly when it comes to gaming and video playback. Additionally, there have been reports of screen damage, such as cracks, even with minimal handling.</p>
+
+                <p>Despite these drawbacks, Fire Tablets remain a popular choice among customers who prioritize affordability and convenience. For those seeking a basic tablet for browsing the web, shopping, and reading, Fire Tablets are a viable option. Their ease of setup and reliable Wi-Fi connectivity make them suitable for casual users.</p>
+
+                <p>In terms of suitability, Fire Tablets are ideal for families with young children, students, or individuals who want a simple, low-cost device for basic tasks. However, for power users or those requiring high-performance capabilities, Fire Tablets may not be the best choice.</p>
+
+                <p>After considering the pros and cons, I recommend choosing Fire Tablets if you're looking for a budget-friendly tablet for:</p>
+
+                <ul>
+                    <li>Families with young children who need a device for reading, games, and educational content</li>
+                    <li>Students or individuals who require a simple, low-cost device for basic tasks like browsing and reading</li>
+                    <li>Gift-giving purposes, especially during holiday seasons</li>
+                </ul>
+
+                <p>On the other hand, look elsewhere if you're seeking a high-performance tablet for gaming, video editing, or demanding applications.</p>
+
+                <p><strong>Ultimately, Fire Tablets offer exceptional value for their price, making them an attractive option for those on a tight budget. While they may not excel in terms of speed or display quality, their reliability, ease of use, and entertainment value make them a solid choice for those prioritizing affordability and convenience.</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-kindle" class="modal" onclick="closeModal(event, 'kindle')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event, 'kindle')">×</button>
+            <div class="modal-header">Kindle E-Readers</div>
+            
+            <div class="version-toggle">
+                <button class="version-btn active" onclick="switchVersion('kindle', 'controlled')">Controlled Version</button>
+                <button class="version-btn" onclick="switchVersion('kindle', 'creative')">Creative Version</button>
+            </div>
+            
+            <div class="modal-body" id="content-kindle-controlled">
+                <p>As a tech-savvy individual, I've analyzed numerous customer reviews for Kindle E-Readers, and here's my verdict: these devices excel in providing a seamless reading experience, especially for bookworms who devour multiple titles at once. One of the standout features customers rave about is the ability to charge their Kindles wirelessly using a compatible device, such as a tablet or smartphone. Many reviewers appreciate the compact design, making them easy to carry around. However, some users find the lack of additional features, such as built-in lights or expandable storage, to be a drawback.</p>
+
+                <p>Recurring complaints center around the high price point, with some customers feeling that the chargers sold separately are overpriced. Additionally, there have been instances where the included chargers didn't match the advertised specifications, leading to frustration. Some reviewers also express disappointment with the limited functionality compared to older models.</p>
+
+                <p>Kindle E-Readers are ideal for avid readers who prioritize convenience, portability, and a distraction-free reading environment. Their compact size makes them perfect for commuting, travel, or cozying up with a good book. However, those seeking advanced features like built-in lights or expandable storage might want to consider alternative options.</p>
+
+                <p>In conclusion, Kindle E-Readers offer an excellent reading experience, but their limitations may deter some users. If you're an avid reader looking for a hassle-free, portable device, Kindle E-Readers are a great choice. Choose Kindle E-Readers if you:</p>
+
+                <ul>
+                    <li>Are an avid reader who devours multiple books at once</li>
+                    <li>Prioritize convenience, portability, and a distraction-free reading environment</li>
+                    <li>Value a compact design and wireless charging capabilities</li>
+                </ul>
+
+                <p>On the other hand, look elsewhere if you:</p>
+
+                <ul>
+                    <li>Seek advanced features like built-in lights or expandable storage</li>
+                    <li>Are on a tight budget and prefer affordable chargers</li>
+                    <li>Prefer devices with more extensive functionality and customization options</li>
+                </ul>
+
+                <p><strong>Ultimately, Kindle E-Readers are a solid choice for readers who value simplicity and ease of use. With their compact design, wireless charging capabilities, and seamless reading experience, they're an excellent option for anyone looking for a dedicated e-reader.</strong></p>
+            </div>
+
+            <div class="modal-body" id="content-kindle-creative" style="display: none;">
+                <p>As a tech-savvy individual, I've been following the latest trends in e-readers, and the Kindle E-Reader has consistently impressed me with its sleek design and user-friendly interface. Based on the reviews I've gathered, here's what I've found:</p>
+
+                <p>The main strengths that customers love about Kindle E-Readers include their functionality, ease of use, and compact size. Many reviewers appreciate the ability to charge their devices on the go, thanks to the included power adapter. However, some users have expressed frustration with the pricing, citing that similar chargers can be found on Amazon at a fraction of the cost.</p>
+
+                <p>One recurring complaint is the lack of advanced features compared to older models. Some reviewers feel that the newer Kindle E-Readers are underwhelming, especially considering the price point. Additionally, there have been reports of issues with the quality control process, resulting in defective adapters that don't match the product description.</p>
+
+                <p>Despite these limitations, Kindle E-Readers remain a popular choice among book lovers due to their exceptional reading experience. They're ideal for individuals who primarily read digital books, as they offer a distraction-free environment and access to a vast library of titles.</p>
+
+                <p>In terms of suitability, Kindle E-Readers are best suited for casual readers who want a hassle-free e-reading experience. They're perfect for commuters, students, or anyone looking for a portable device to enjoy their favorite books. However, if you're an avid reader who wants advanced features like built-in lights, waterproofing, or high-end displays, you may want to consider alternative options.</p>
+
+                <p>After weighing the pros and cons, I'm convinced that Kindle E-Readers are the best choice for those seeking a straightforward, no-frills e-reading experience. While they may not offer the most advanced features, their simplicity and affordability make them an excellent option for everyday reading.</p>
+
+                <p><strong>So, choose Kindle E-Readers if you're a casual reader looking for a reliable, portable device to enjoy your favorite books. Look elsewhere if you're an avid reader seeking high-end features or advanced capabilities.</strong></p>
+
+                <p>With their compact size, user-friendly interface, and affordable pricing, Kindle E-Readers are an excellent choice for anyone seeking a hassle-free e-reading experience. Whether you're a student, commuter, or book lover, Kindle E-Readers are sure to deliver a top-notch reading experience that meets your needs.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-fire-kids" class="modal" onclick="closeModal(event, 'fire-kids')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event, 'fire-kids')">×</button>
+            <div class="modal-header">Fire Kids Edition</div>
+            
+            <div class="version-toggle">
+                <button class="version-btn active" onclick="switchVersion('fire-kids', 'controlled')">Controlled Version</button>
+                <button class="version-btn" onclick="switchVersion('fire-kids', 'creative')">Creative Version</button>
+            </div>
+            
+            <div class="modal-body" id="content-fire-kids-controlled">
+                <p><strong>Fire Kids Edition: A Parent's Best Friend for Young Learners</strong></p>
+
+                <p>As a parent, finding the right device for your child can be a daunting task. With numerous options available in the market, it's essential to choose a product that caters to your child's unique needs and learning style. In this review, we'll delve into the world of Fire Kids Edition, exploring its strengths, weaknesses, and suitability for different types of customers.</p>
+
+                <p>One of the primary advantages of Fire Kids Edition is its ability to provide a safe and controlled environment for young learners. The device comes with robust parental controls, allowing parents to customize content and set limits on screen time. This feature is particularly useful for parents who want to ensure their child is exposed to age-appropriate material while preventing excessive screen time. Additionally, the inclusion of Kindle Unlimited and FreeTime Unlimited subscriptions offers access to a vast library of educational content, including e-books, games, and apps.</p>
+
+                <p>Many customers rave about the durability and ease of use of Fire Kids Edition. Reviewers praise the device's rugged design, which can withstand rough handling, and the intuitive interface that makes it accessible to young users. Some reviewers even mention that the device's battery life is impressive, lasting several hours on a single charge.</p>
+
+                <p>However, some customers express concerns about the device's performance. A few reviewers note that the touchscreen can be unresponsive at times, and the camera quality is mediocre. Furthermore, the navigation system is slower compared to other popular devices like Apple and Samsung.</p>
+
+                <p>Despite these limitations, Fire Kids Edition remains an excellent choice for families with young children. Its affordability, combined with the included warranties and subscriptions, makes it an attractive option for parents on a budget. If you're looking for a reliable and easy-to-use device for your child, Fire Kids Edition is an excellent choice.</p>
+
+                <p><strong>In our verdict, Fire Kids Edition is the best choice for families who value safety, control, and affordability. While it may not offer the same level of performance as other devices, its strengths in these areas make it an ideal solution for parents seeking a hassle-free experience. Choose Fire Kids Edition if you're looking for a device that provides a secure and engaging environment for your child to learn and grow.</strong></p>
+
+                <p>On the other hand, if you're willing to invest in a premium device with advanced features and faster performance, you may want to consider alternative options. Look elsewhere if you prioritize speed, camera quality, and a seamless user experience over affordability and safety. Ultimately, Fire Kids Edition is a solid choice for families who prioritize these factors, offering a reliable and enjoyable experience for young learners.</p>
+            </div>
+
+            <div class="modal-body" id="content-fire-kids-creative" style="display: none;">
+                <p>When it comes to finding the right tablet for kids, Fire Kids Edition stands out from the rest. One of its main strengths is the ease of use, making it perfect for young children. Many parents appreciate the parental controls, which allow customization of content without requiring extensive setup. The inclusion of a 2-year warranty and a free, 1-year subscription to Amazon Kids provide peace of mind for parents. Additionally, the tablet's affordability is a significant advantage, making it a worthwhile investment for families.</p>
+
+                <p>However, some users have noted that the navigation can be sluggish compared to other devices, and the touchscreen may not be highly responsive. Furthermore, the camera quality leaves room for improvement. Despite these limitations, many customers have reported positive experiences with the tablet, citing its durability and the variety of educational content available.</p>
+
+                <p>Fire Kids Edition is particularly suitable for families with young children, as it offers a range of learning tools and games that cater to different age groups. Parents who value convenience and ease of use will appreciate the tablet's simple interface and parental controls. Those seeking a budget-friendly option without compromising on functionality will find Fire Kids Edition to be an excellent choice.</p>
+
+                <p>After considering the pros and cons, I believe Fire Kids Edition is the best choice for families with children aged 3-8 years old. While it may not offer the same level of performance as more expensive devices, its unique combination of affordability, ease of use, and educational content make it an attractive option.</p>
+
+                <p>In contrast, those seeking a high-performance device with advanced features may want to look elsewhere. If you're willing to invest in a premium tablet with superior performance and camera quality, you might consider alternative options.</p>
+
+                <p><strong>Ultimately, I recommend choosing Fire Kids Edition if you're looking for a hassle-free, affordable solution for your child's entertainment and education. With its robust parental controls, educational content, and durable design, Fire Kids Edition is an excellent choice for families who prioritize convenience and value. Look elsewhere if you're seeking a high-end device with advanced features and superior performance.</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-echo" class="modal" onclick="closeModal(event, 'echo')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event, 'echo')">×</button>
+            <div class="modal-header">Echo & Smart Speakers</div>
+            
+            <div class="version-toggle">
+                <button class="version-btn active" onclick="switchVersion('echo', 'controlled')">Controlled Version</button>
+                <button class="version-btn" onclick="switchVersion('echo', 'creative')">Creative Version</button>
+            </div>
+            
+            <div class="modal-body" id="content-echo-controlled">
+                <p>As a tech-savvy individual, I've had the pleasure of exploring various Echo & Smart Speakers products, and I'm excited to share my findings with you. After delving into numerous customer reviews, I've identified some key strengths and limitations of these devices.</p>
+
+                <p>One of the primary reasons customers adore Echo & Smart Speakers is their ease of setup and user-friendliness. Many reviewers praised the intuitive installation process, which guides users through the setup with minimal hassle. Additionally, these devices offer a wide range of features, including music playback, smart home integration, and voice assistance, making them an excellent addition to any home or office.</p>
+
+                <p>However, some customers have expressed frustration with the limited song selection and potential misinterpretation of accents and pronunciations. A few reviewers also mentioned that the connection with certain smartphones, such as iPhones, could be improved.</p>
+
+                <p>Despite these limitations, Echo & Smart Speakers remain an excellent choice for those seeking a convenient and entertaining way to manage their daily lives. They're perfect for families, individuals, and even seniors who appreciate the hands-free functionality and accessibility.</p>
+
+                <p>In particular, I'd recommend Echo & Smart Speakers for:</p>
+
+                <ul>
+                    <li>Families with young children, as they provide a safe and engaging way to play music and answer questions.</li>
+                    <li>Individuals who value convenience and ease of use, as these devices are incredibly user-friendly.</li>
+                    <li>Seniors who may struggle with traditional interfaces, as Echo & Smart Speakers offer a simple and accessible way to manage their daily routines.</li>
+                </ul>
+
+                <p><strong>Verdict: While Echo & Smart Speakers may not be the best choice for those seeking a comprehensive music library or seamless connectivity with specific smartphones, they excel in providing a convenient and entertaining experience for everyday tasks.</strong></p>
+
+                <p><strong>Recommendation: Choose Echo & Smart Speakers if you're looking for a hassle-free way to manage your daily life, enjoy music, and stay connected with loved ones. However, if you're a music enthusiast seeking a vast song library or require seamless smartphone integration, you might want to explore alternative options. Look elsewhere if you prioritize these specific features over the overall convenience and ease of use offered by Echo & Smart Speakers.</strong></p>
+            </div>
+
+            <div class="modal-body" id="content-echo-creative" style="display: none;">
+                <p>As a tech-savvy individual, I've had the opportunity to research and explore various smart speakers, including those from Amazon and Google. After analyzing numerous customer reviews, I'm excited to share my findings on what makes Echo & Smart Speakers truly shine, along with some areas where they may fall short.</p>
+
+                <p>The primary strength of Echo & Smart Speakers lies in their ease of setup and user-friendly interface. Many customers rave about how seamlessly these devices integrate into their daily lives, making it effortless to control their smart homes, play music, and access various apps. For instance, one reviewer mentioned that setting up their Echo was "easy" and "very user-friendly," allowing them to quickly get started with features like playing calming music to aid sleep and creating shopping lists.</p>
+
+                <p>Another significant advantage of Echo & Smart Speakers is their versatility in terms of functionality. Customers appreciate the ability to use these devices as both assistants and wireless speakers, effortlessly switching between tasks like answering questions, controlling smart home devices, and streaming music. One enthusiastic reviewer exclaimed, "Alexa has become a member of the family!" highlighting the device's capacity to learn and adapt to individual preferences.</p>
+
+                <p>However, some customers have noted limitations and quirks associated with Echo & Smart Speakers. A few reviewers expressed frustration with the device's inability to access every song by every artist, citing this as a major drawback. Additionally, some users have reported difficulties with Alexa's interpretation of accents and pronunciations, leading to occasional miscommunications.</p>
+
+                <p>Echo & Smart Speakers are ideal for families, individuals seeking a hassle-free smart home experience, and those who value convenience and ease of use. They excel in providing seamless integration with popular services like Amazon and Google, making it simple to access news, weather updates, and entertainment content.</p>
+
+                <p>So, when should you choose Echo & Smart Speakers? If you're looking for a reliable, user-friendly smart speaker that can easily integrate with your existing ecosystem, Echo & Smart Speakers are an excellent choice. However, if you're deeply invested in a specific music streaming service or require unparalleled song selection, you might want to consider alternative options.</p>
+
+                <p>In conclusion, Echo & Smart Speakers offer a compelling blend of ease of use, versatility, and smart home integration. While they may not cater to every need, their strengths make them an excellent choice for many users. If you're seeking a convenient, hassle-free smart speaker experience that can adapt to your lifestyle, look no further than Echo & Smart Speakers.</p>
+
+                <p><strong>Choose Echo & Smart Speakers if you:</strong></p>
+
+                <ul>
+                    <li>Are an Apple user looking for a compatible smart speaker</li>
+                    <li>Value ease of setup and a user-friendly interface</li>
+                    <li>Want a versatile device that can serve as both an assistant and a wireless speaker</li>
+                    <li>Need assistance with smart home integration and shopping lists</li>
+                    <li>Prioritize convenience and hands-free operation</li>
+                </ul>
+
+                <p><strong>Look elsewhere if you:</strong></p>
+
+                <ul>
+                    <li>Require unparalleled song selection or access to every song by every artist</li>
+                    <li>Have a deep investment in a specific music streaming service</li>
+                    <li>Prefer a device with more advanced AI capabilities or personalized recommendations</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-fire-tv" class="modal" onclick="closeModal(event, 'fire-tv')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event, 'fire-tv')">×</button>
+            <div class="modal-header">Fire TV & Streaming</div>
+            
+            <div class="version-toggle">
+                <button class="version-btn active" onclick="switchVersion('fire-tv', 'controlled')">Controlled Version</button>
+                <button class="version-btn" onclick="switchVersion('fire-tv', 'creative')">Creative Version</button>
+            </div>
+            
+            <div class="modal-body" id="content-fire-tv-controlled">
+                <p>After reviewing numerous customer feedback, I've identified some key strengths and weaknesses of Fire TV & Streaming products. One of the main strengths that customers love is its ease of setup, with many praising the relatively quick process of getting started. Additionally, users appreciate the wide range of apps available, including popular streaming services like Netflix and Hulu, as well as free alternatives like TubiTV. Many customers also value the ability to cut the cord and ditch traditional cable TV, citing the convenience and cost savings of streaming content directly to their TVs.</p>
+
+                <p>However, recurring complaints and limitations include issues with setup, particularly when dealing with complex configurations or outdated hardware. Some users have reported difficulties with the Mirror Cast function, which can lead to poor video quality when streaming to devices like laptops. Furthermore, customers have expressed frustration with the need to call Verizon multiple times to resolve connectivity issues, highlighting the importance of reliable customer support.</p>
+
+                <p>Fire TV & Streaming products are best suited for customers who want a hassle-free streaming experience, particularly those with stable internet connections and compatible devices. Users who value ease of use and a wide range of content options will find Fire TV & Streaming to be an excellent choice. However, those with older or less capable hardware may encounter difficulties with setup and compatibility.</p>
+
+                <p>In contrast to alternatives, Fire TV & Streaming offers a unique combination of ease of use, app selection, and cost savings. While other streaming services may offer more advanced features or better picture quality, Fire TV & Streaming's simplicity and accessibility make it an attractive option for casual viewers and those looking to simplify their entertainment setup.</p>
+
+                <p>Based on these findings, I would recommend Fire TV & Streaming to customers who:</p>
+
+                <ul>
+                    <li>Want a hassle-free streaming experience</li>
+                    <li>Have stable internet connections and compatible devices</li>
+                    <li>Value ease of use and a wide range of content options</li>
+                    <li>Are looking to cut the cord and save money on traditional cable TV</li>
+                </ul>
+
+                <p>On the other hand, I would advise against choosing Fire TV & Streaming if:</p>
+
+                <ul>
+                    <li>You're looking for advanced features or better picture quality</li>
+                    <li>Your device or internet connection is outdated or incompatible</li>
+                    <li>You're willing to invest time and effort into troubleshooting and resolving technical issues</li>
+                </ul>
+
+                <p><strong>Ultimately, Fire TV & Streaming is a solid choice for customers seeking a straightforward and affordable streaming solution. Its ease of use, app selection, and cost savings make it an excellent option for those looking to simplify their entertainment setup and enjoy a wide range of content without breaking the bank.</strong></p>
+            </div>
+
+            <div class="modal-body" id="content-fire-tv-creative" style="display: none;">
+                <p>As a tech-savvy individual, I've analyzed numerous customer reviews to provide an unbiased verdict on Fire TV & Streaming products. After examining the pros and cons, I've found that the primary strengths of these devices lie in their ease of setup, reliability, and extensive app library, allowing users to cut the cord and access various streaming services without relying on traditional cable providers.</p>
+
+                <p>Many customers appreciate the convenience of using Fire TV & Streaming, citing its relatively easy setup process and reliable performance. However, some users have reported difficulties with installation, particularly when dealing with older TVs or limited HDMI port availability. Additionally, a few reviewers have expressed frustration with the setup process itself, mentioning multiple calls to Verizon to resolve connectivity issues.</p>
+
+                <p>One common complaint is the lack of seamless integration with certain devices, such as laptops, where the Mirror Cast feature fails to display video properly. Nevertheless, many users have reported positive experiences with the device, praising its ability to stream content from popular services like Netflix, Hulu, and Amazon Prime.</p>
+
+                <p>For those looking to ditch traditional cable TV, Fire TV & Streaming offers a compelling alternative. Its vast array of apps and free streaming options make it an attractive option for those seeking flexibility and cost savings. In fact, one reviewer successfully reduced their monthly cable bill by combining their DirectTV Now subscription with Prime and Netflix memberships.</p>
+
+                <p>However, it's essential to note that Fire TV & Streaming may not be the best choice for everyone. Users with older TVs or limited HDMI port availability may encounter difficulties during installation. Furthermore, those relying on wireless connections may experience lag or poor performance.</p>
+
+                <p>In conclusion, Fire TV & Streaming is an excellent option for those seeking a hassle-free streaming experience, willing to invest time into setup, and comfortable with potential connectivity issues. If you're looking to cut the cord and enjoy a wide range of streaming services without the burden of traditional cable providers, Fire TV & Streaming is an excellent choice.</p>
+
+                <p><strong>Verdict: Choose Fire TV & Streaming if you're willing to invest time into setup, have a compatible TV with available HDMI ports, and prioritize a hassle-free streaming experience. Look elsewhere if you require seamless integration with laptops or struggle with setup due to limited technical expertise.</strong></p>
+
+                <p><strong>Recommendation: For those seeking a flexible and affordable streaming solution, Fire TV & Streaming is an excellent choice. By taking advantage of its extensive app library, free streaming options, and compatibility with various devices, you can enjoy a wide range of content without the constraints of traditional cable TV.</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(category) {
+            const modal = document.getElementById('modal-' + category);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(event, category) {
+            const modal = document.getElementById('modal-' + category);
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function switchVersion(category, version) {
+            // Hide all versions for this category
+            const controlledContent = document.getElementById('content-' + category + '-controlled');
+            const creativeContent = document.getElementById('content-' + category + '-creative');
+            
+            // Get buttons
+            const modal = document.getElementById('modal-' + category);
+            const buttons = modal.querySelectorAll('.version-btn');
+            
+            if (version === 'controlled') {
+                controlledContent.style.display = 'block';
+                creativeContent.style.display = 'none';
+                buttons[0].classList.add('active');
+                buttons[1].classList.remove('active');
+            } else {
+                controlledContent.style.display = 'none';
+                creativeContent.style.display = 'block';
+                buttons[0].classList.remove('active');
+                buttons[1].classList.add('active');
+            }
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const activeModal = document.querySelector('.modal.active');
+                if (activeModal) {
+                    activeModal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
