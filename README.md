@@ -1,10 +1,10 @@
-# Product Review Aggregator
+# Automated Customer Reviews
 
 *Ironhack AI Engineering Bootcamp*
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Project Overview](#project-overview)
 - [Project Goals](#project-goals)
@@ -17,7 +17,7 @@
 
 ---
 
-## 👤 Team
+## Team
 
 **Marcos Sousa** - AI Engineering Bootcamp Student  
 Ironhack Munich  
@@ -25,7 +25,7 @@ February 2025
 
 ---
 
-## 🎯 Project Overview
+## Project Overview
 
 This project contains an NLP-powered product review aggregator that uses machine learning to analyze Amazon customer reviews and generate actionable insights.
 
@@ -33,7 +33,7 @@ This project contains an NLP-powered product review aggregator that uses machine
 
 ---
 
-## 🎯 Project Goals
+## Project Goals
 
 ### Task 1: Sentiment Analysis
 Classify customer reviews into three categories (positive, neutral, negative) to help businesses understand customer satisfaction and identify areas for improvement.
@@ -52,7 +52,7 @@ Generate blog-style recommendation articles for each product category to help cu
 
 ---
 
-## 📦 Deliverables
+## Deliverables
 
 ### 1. Source Code
 - **Notebooks**: 4 Jupyter notebooks covering EDA, sentiment analysis, clustering, and text generation
@@ -67,7 +67,7 @@ Generate blog-style recommendation articles for each product category to help cu
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 root/
@@ -90,16 +90,17 @@ root/
 │
 ├── outputs/
 │   ├── models/
-│   │   ├── generated_blogposts_v3_no_early_clip.txt    # Final blog articles
-│   │   └── roberta_finetuned/      # Fine-tuned model (excluded, 1.3GB)
+│   │   └── generated_blogposts_v3_no_early_clip.txt    # Final blog articles
+│   │   
 │   │
 │   └── figures/                     # Visualization outputs
-│       ├── confusion_matrices/
-│       ├── clustering_umap.png
-│       └── metrics_comparison.png
+│       ├── confusion_matrices
+│       └── clustering_umap.png
 │
-├── presentation/
-│   └── RoboReviews_Presentation.pptx      # Final presentation slides
+│
+├── deliverables/
+│   └── G8_Presentation.pptx      # Final presentation slides
+|   └──
 │
 ├── requirements.txt                 # Python dependencies
 └── README.md                       # This file
@@ -107,7 +108,7 @@ root/
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.9+
@@ -145,7 +146,7 @@ jupyter notebook
 
 ---
 
-## 📊 Results Summary
+## Results Summary
 
 ### Sentiment Analysis (Task 1)
 
@@ -187,7 +188,7 @@ jupyter notebook
 
 ---
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 ### Core Libraries
 - **Data Processing**: pandas, numpy, scikit-learn
@@ -208,7 +209,7 @@ jupyter notebook
 
 ---
 
-## 📝 Key Learnings
+## Key Learnings
 
 1. **Data Quality > Model Size**: Removing noisy categories improved results more than switching to larger models
 2. **Prompt Engineering Matters**: Iterative refinement (V1→V2→V3) had massive impact on generation quality
@@ -218,23 +219,13 @@ jupyter notebook
 
 ---
 
-## 🔮 Future Work
-
-- **Product-Level Comparison**: Extend generation to compare specific products within categories (e.g., Fire HD 8 vs Fire HD 10)
-- **Real-Time Pipeline**: Build API for live review aggregation and summarization
-- **Multi-Language Support**: Extend to non-English reviews
-- **Fine-Tuning**: Train LLaMA on product review summarization data
-- **User Study**: Validate generated summaries with real users
-
----
-
-## 📄 License
+## License
 
 This project is for educational purposes as part of the Ironhack AI Engineering Bootcamp.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Ironhack instructors and teaching assistants
 - Hugging Face for model access
@@ -244,4 +235,3 @@ This project is for educational purposes as part of the Ironhack AI Engineering 
 ---
 
 **Last Updated**: February 20, 2025  
-**Status**: ✅ Project Complete - Ready for Presentation
