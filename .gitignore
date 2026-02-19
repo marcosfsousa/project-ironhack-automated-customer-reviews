@@ -1,9 +1,5 @@
 # Environments
-.env
-.envrc
 .venv
-env/
-venv/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -13,6 +9,3 @@ data/*.csv
 
 # Keep processed files tracked
 !data/processed/
-
-# README.md
-README.md
