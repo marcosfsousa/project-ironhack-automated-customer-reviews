@@ -8,6 +8,7 @@
 
 - [Project Overview](#project-overview)
 - [Project Goals](#project-goals)
+- [Dataset](#datasets)
 - [Deliverables](#deliverables)
 - [Repository Structure](#repository-structure)
 - [Quick Start](#quick-start)
@@ -30,6 +31,14 @@ February 2025
 This project contains an NLP-powered product review aggregator that uses machine learning to analyze Amazon customer reviews and generate actionable insights.
 
 **Timeline**: 4 days
+
+---
+
+## Datasets
+
+All original datasets are publicly available on Kaggle.
+
+You can find them [here](https://www.kaggle.com/datasets/datafiniti/consumer-reviews-of-amazon-products).
 
 ---
 
@@ -64,6 +73,9 @@ Generate blog-style recommendation articles for each product category to help cu
 
 ### 3. Presentation
 - **Slides**: PowerPoint presentation covering methodology, results, and insights
+
+### 4. Demo
+- **Static HTML**: Single HTML file with demo hosted publicly in Netlify. Visit the online version [here](https://automated-customer-reviews.netlify.app/).
 
 ---
 
